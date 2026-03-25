@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Наблюдателна подготовка | Национална олимпиада по астрономия</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
+            min-height: 100vh;
+            color: #e8edff;
+            position: relative;
+            background: #0a0e1a;
+            background-image: url('astro.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(8, 12, 24, 0.88), rgba(2, 6, 20, 0.94));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.8rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* login page */
+        .login-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .login-card {
+            background: rgba(12, 18, 32, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid #c9a54b;
+            padding: 2.5rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .login-card .telescope-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .login-card h2 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: #f2e8cf;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-card p {
+            font-size: 0.8rem;
+            color: #9aaed9;
+            margin-bottom: 1.8rem;
+        }
+
+        .login-input-group {
+            margin-bottom: 1.2rem;
+            text-align: left;
+        }
+
+        .login-input-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            color: #cdbc8a;
+            margin-bottom: 0.4rem;
+        }
+
+        .login-input-group input {
+            width: 100%;
+            background: #0a0f1f;
+            border: 1px solid #4a5177;
+            border-radius: 0;
+            padding: 0.8rem 1rem;
+            font-size: 0.95rem;
+            color: #f0e9da;
+            font-weight: 400;
+            outline: none;
+        }
+
+        .login-input-group input:focus {
+            border-color: #dbb45c;
+            background: #0f1428;
+        }
+
+        .login-btn {
+            background: #2a5a3e;
+            border: none;
+            width: 100%;
+            padding: 0.8rem;
+            font-weight: 500;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 1px;
+            border-radius: 0;
+            margin-top: 0.5rem;
+        }
+
+        .login-btn:hover {
+            background: #3e7152;
+        }
+
+        .login-error {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: rgba(75, 35, 35, 0.8);
+            border-left: 3px solid #e68a6e;
+            color: #ffded6;
+            font-size: 0.85rem;
+        }
+
+        .main-content {
+            display: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(220, 180, 80, 0.5);
+            padding-bottom: 1rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #e0d6b0;
+        }
+
+        .telescope-icon {
+            font-family: system-ui, 'Segoe UI', sans-serif;
+            font-size: 1.5rem;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: #f2e8cf;
+        }
+
+        header p {
+            font-size: 0.8rem;
+            color: #9aaed9;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: 1.5px solid #b99b4c;
+            color: #e5d5a8;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            letter-spacing: 1px;
+            min-width: 130px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .mode-btn:hover, .mode-btn.active {
+            background: #b68b40;
+            border-color: #e9d394;
+            color: #ffffff;
+        }
+
+        .section-card {
+            background: rgba(12, 18, 32, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(200, 170, 90, 0.4);
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .section-card.visible {
+            display: block;
+        }
+
+        .question-display {
+            background: rgba(0, 0, 0, 0.45);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-left: 3px solid #c9a54b;
+        }
+
+        .question-value {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #f7efcf;
+        }
+
+        .hint-text {
+            font-size: 0.8rem;
+            color: #adc0e6;
+            margin-top: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #cdbc8a;
+            margin-bottom: 0.3rem;
+        }
+
+        input, select {
+            width: 100%;
+            background: #0a0f1f;
+            border: 1px solid #4a5177;
+            padding: 0.7rem 1rem;
+            font-size: 0.9rem;
+            color: #f0e9da;
+            outline: none;
+        }
+
+        .check-btn, .random-btn {
+            background: #2a5a3e;
+            border: none;
+            padding: 0.7rem;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .random-btn {
+            background: #232a3f;
+            border: 1px solid #8e7a4c;
+            width: auto;
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid #bd9a4a;
+        }
+
+        .feedback.correct {
+            background: rgba(35, 75, 45, 0.6);
+            border-left-color: #8bcb8b;
+            color: #e0ffe0;
+        }
+
+        .feedback.wrong {
+            background: rgba(75, 35, 35, 0.6);
+            border-left-color: #e68a6e;
+            color: #ffded6;
+        }
+
+        .stats {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.6rem;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .stats span {
+            color: #e2c476;
+            font-weight: 600;
+        }
+
+        .search-box {
+            margin-bottom: 1.2rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.7rem;
+        }
+
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e2c476;
+            margin: 1.2rem 0 0.8rem 0;
+            border-bottom: 1px solid #5a6a8a;
+            padding-bottom: 0.3rem;
+        }
+
+        .category-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .info-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(200, 170, 90, 0.2);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .info-item strong {
+            color: #e2c476;
+        }
+
+        .stars-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .star-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(200, 170, 90, 0.2);
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .star-rank { color: #e2c476; min-width: 45px; }
+        .star-name-db { font-weight: 500; min-width: 140px; }
+        .star-const { color: #adc0e6; min-width: 120px; }
+        .star-letter { color: #e2c476; min-width: 40px; }
+        .star-mag { color: #9aaed9; }
+
+        .quote {
+            text-align: center;
+            font-style: italic;
+            color: #c9b27c;
+            margin: 1.5rem 0 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid rgba(200, 170, 90, 0.3);
+            font-size: 0.85rem;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.65rem;
+            margin-top: 1rem;
+            color: #7c8bb0;
+        }
+
+        @media (max-width: 680px) {
+            .container { padding: 1rem; }
+            .question-value { font-size: 1.3rem; }
+            .mode-btn { min-width: 100px; padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+            .star-item { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div id="loginPage" class="login-page">
+    <div class="login-card">
+        <div class="telescope-icon">🔭</div>
+        <h2>НАЦИОНАЛНА ОЛИМПИАДА</h2>
+        <p>Наблюдателна подготовка по астрономия</p>
+        <div class="login-input-group">
+            <label>ПАРОЛА ЗА ДОСТЪП</label>
+            <input type="password" id="passwordInput" placeholder="Въведи парола" autocomplete="off">
+        </div>
+        <button class="login-btn" id="loginBtn">ВХОД</button>
+        <div id="loginError" class="login-error" style="display: none;">Грешна парола! Опитай отново.</div>
+    </div>
+</div>
+
+<div id="mainContent" class="main-content">
+    <div class="container">
+        <header>
+            <div class="logo"><span class="telescope-icon">🔭</span> ASTRONOMY BURGAS</div>
+            <h1></h1>
+            <p>Наблюдателна подготовка | III кръг и Подбор</p>
+        </header>
+
+        <div class="nav-buttons">
+            <button class="mode-btn" data-section="stanislav">СТАНИСЛАВ</button>
+            <button class="mode-btn" data-section="stoyanov">СТОЯНОВ</button>
+            <button class="mode-btn" data-section="database">БАЗА ДАННИ</button>
+            <button class="mode-btn" data-section="testche">ТЕСТЧЕ</button>
+        </div>
+
+        <div id="stanislavSection" class="section-card"><div id="stanislavGame"></div></div>
+        <div id="stoyanovSection" class="section-card"><div id="stoyanovGame"></div></div>
+        <div id="databaseSection" class="section-card">
+            <div class="search-box"><input type="text" id="dbSearch" placeholder="Търси звезда, съзвездие или буква..."></div>
+            <div id="starsListContainer" class="stars-list"></div>
+        </div>
+        <div id="testcheSection" class="section-card">
+            <div class="search-box"><input type="text" id="theorySearch" placeholder="Търси в теорията (категория, термин)..."></div>
+            <div id="theoryContainer"></div>
+        </div>
+
+        <div class="stats">
+            ВЕРНИ: <span id="correctCount">0</span> | ГРЕШНИ: <span id="wrongCount">0</span>
+        </div>
+        <div class="quote">
+            “Anna's a goddess… you know what happens to mortals who get involved with gods.”<br>
+            “Buggered, is it?”<br>
+            “Every time.”<br>
+            — Notting Hill
+        </div>
+        <footer>Подготовка за Национална олимпиада по астрономия | 90 най-ярки звезди | Теория: планети, спектри, разстояния, планети джуджета</footer>
+    </div>
+</div>
+
+<script>
+    // ==================== ПАРОЛА ====================
+    const CORRECT_PASSWORD = "0306NT2010";
+    if (sessionStorage.getItem('astro_access') === 'true') {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        initializeEverything();
+    }
+
+    function login() {
+        const pwd = document.getElementById('passwordInput').value;
+        if (pwd === CORRECT_PASSWORD) {
+            sessionStorage.setItem('astro_access', 'true');
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            initializeEverything();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+        }
+    }
+    document.getElementById('loginBtn').addEventListener('click', login);
+    document.getElementById('passwordInput').addEventListener('keypress', e => { if(e.key === 'Enter') login(); });
+
+    // ==================== ПЪЛНА БАЗА С 90-ТЕ НАЙ-ЯРКИ ЗВЕЗДИ ====================
+    const starsDatabase = [
+        { rank:1, name:"Сириус", constellation:"Голямо куче", letter:"α", mag:-1.46 },
+        { rank:2, name:"Канопус", constellation:"Кил", letter:"α", mag:-0.72 },
+        { rank:3, name:"Арктур", constellation:"Воловар", letter:"α", mag:-0.04 },
+        { rank:4, name:"Алфа Кентавър A", constellation:"Кентавър", letter:"α", mag:-0.01 },
+        { rank:5, name:"Вега", constellation:"Лира", letter:"α", mag:0.03 },
+        { rank:6, name:"Капела", constellation:"Коларник", letter:"α", mag:0.08 },
+        { rank:7, name:"Ригел", constellation:"Орион", letter:"β", mag:0.12 },
+        { rank:8, name:"Процион", constellation:"Малко куче", letter:"α", mag:0.34 },
+        { rank:9, name:"Ахернар", constellation:"Еридан", letter:"α", mag:0.46 },
+        { rank:10, name:"Бетелгейзе", constellation:"Орион", letter:"α", mag:0.50 },
+        { rank:11, name:"Хадар", constellation:"Кентавър", letter:"β", mag:0.60 },
+        { rank:12, name:"Алтаир", constellation:"Орел", letter:"α", mag:0.76 },
+        { rank:13, name:"Акрукс", constellation:"Южен кръст", letter:"α", mag:0.77 },
+        { rank:14, name:"Алдебаран", constellation:"Телец", letter:"α", mag:0.85 },
+        { rank:15, name:"Капела B", constellation:"Коларник", letter:"α", mag:0.96 },
+        { rank:16, name:"Спика", constellation:"Дева", letter:"α", mag:1.04 },
+        { rank:17, name:"Антарес", constellation:"Скорпион", letter:"α", mag:1.06 },
+        { rank:18, name:"Полукс", constellation:"Близнаци", letter:"β", mag:1.16 },
+        { rank:19, name:"Фомалхаут", constellation:"Южна риба", letter:"α", mag:1.17 },
+        { rank:20, name:"Денеб", constellation:"Лебед", letter:"α", mag:1.25 },
+        { rank:21, name:"Мимоза", constellation:"Южен кръст", letter:"β", mag:1.25 },
+        { rank:22, name:"Алфа Кентавър B", constellation:"Кентавър", letter:"α", mag:1.33 },
+        { rank:23, name:"Регулус", constellation:"Лъв", letter:"α", mag:1.35 },
+        { rank:24, name:"Адара", constellation:"Голямо куче", letter:"ε", mag:1.50 },
+        { rank:25, name:"Кастор", constellation:"Близнаци", letter:"α", mag:1.58 },
+        { rank:26, name:"Шаула", constellation:"Скорпион", letter:"λ", mag:1.62 },
+        { rank:27, name:"Гакрукс", constellation:"Южен кръст", letter:"γ", mag:1.63 },
+        { rank:28, name:"Белатрикс", constellation:"Орион", letter:"γ", mag:1.64 },
+        { rank:29, name:"Ел Нат", constellation:"Телец", letter:"β", mag:1.68 },
+        { rank:30, name:"Миаплацидус", constellation:"Кил", letter:"β", mag:1.68 },
+        { rank:31, name:"Алнилам", constellation:"Орион", letter:"ε", mag:1.70 },
+        { rank:32, name:"Алнитак", constellation:"Орион", letter:"ζ", mag:1.70 },
+        { rank:33, name:"Ал Наир", constellation:"Жерав", letter:"α", mag:1.74 },
+        { rank:34, name:"Алиот", constellation:"Голяма мечка", letter:"ε", mag:1.76 },
+        { rank:35, name:"Ал Сухайл", constellation:"Ветрила", letter:"γ", mag:1.78 },
+        { rank:36, name:"Дубхе", constellation:"Голяма мечка", letter:"α", mag:1.79 },
+        { rank:37, name:"Каус Аустралис", constellation:"Стрелец", letter:"ε", mag:1.80 },
+        { rank:38, name:"Мирфак", constellation:"Персей", letter:"α", mag:1.82 },
+        { rank:39, name:"Везен", constellation:"Голямо куче", letter:"δ", mag:1.83 },
+        { rank:40, name:"Бенетнаш", constellation:"Голяма мечка", letter:"η", mag:1.85 },
+        { rank:41, name:"Авиор", constellation:"Кил", letter:"ε", mag:1.86 },
+        { rank:42, name:"Саргас", constellation:"Скорпион", letter:"θ", mag:1.86 },
+        { rank:43, name:"Менкалинан", constellation:"Коларник", letter:"β", mag:1.90 },
+        { rank:44, name:"Атрия", constellation:"Южен триъгълник", letter:"α", mag:1.91 },
+        { rank:45, name:"Алхена", constellation:"Близнаци", letter:"γ", mag:1.93 },
+        { rank:46, name:"Делта Ветрила", constellation:"Ветрила", letter:"δ", mag:1.93 },
+        { rank:47, name:"Павлин", constellation:"Паун", letter:"α", mag:1.94 },
+        { rank:48, name:"Мирзам", constellation:"Голямо куче", letter:"β", mag:1.98 },
+        { rank:49, name:"Алфард", constellation:"Хидра", letter:"α", mag:2.01 },
+        { rank:50, name:"Хамал", constellation:"Овен", letter:"α", mag:2.01 },
+        { rank:51, name:"Алгиеба", constellation:"Лъв", letter:"γ", mag:2.01 },
+        { rank:52, name:"Полярна", constellation:"Малка мечка", letter:"α", mag:2.02 },
+        { rank:53, name:"Денеб Кайтос", constellation:"Кит", letter:"β", mag:2.04 },
+        { rank:54, name:"Сайф", constellation:"Орион", letter:"κ", mag:2.07 },
+        { rank:55, name:"Нунки", constellation:"Стрелец", letter:"σ", mag:2.05 },
+        { rank:56, name:"Менкент", constellation:"Кентавър", letter:"θ", mag:2.06 },
+        { rank:57, name:"Алферац", constellation:"Андромеда", letter:"α", mag:2.07 },
+        { rank:58, name:"Мирах", constellation:"Андромеда", letter:"β", mag:2.07 },
+        { rank:59, name:"Кохаб", constellation:"Малка мечка", letter:"β", mag:2.07 },
+        { rank:60, name:"Рас Алхаге", constellation:"Змиеносец", letter:"α", mag:2.08 },
+        { rank:61, name:"Алгол", constellation:"Персей", letter:"β", mag:2.09 },
+        { rank:62, name:"Алмах", constellation:"Андромеда", letter:"γ", mag:2.10 },
+        { rank:63, name:"Денебола", constellation:"Лъв", letter:"β", mag:2.14 },
+        { rank:64, name:"Гама Касиопея", constellation:"Касиопея", letter:"γ", mag:2.15 },
+        { rank:65, name:"Гама Кентавър", constellation:"Кентавър", letter:"γ", mag:2.20 },
+        { rank:66, name:"Наос", constellation:"Кърма", letter:"ζ", mag:2.21 },
+        { rank:67, name:"Аспидиске", constellation:"Кил", letter:"ι", mag:2.21 },
+        { rank:68, name:"Алфека", constellation:"Северна корона", letter:"α", mag:2.22 },
+        { rank:69, name:"Ламбда Ветрила", constellation:"Ветрила", letter:"λ", mag:2.23 },
+        { rank:70, name:"Мицар", constellation:"Голяма мечка", letter:"ζ", mag:2.23 },
+        { rank:71, name:"Садр", constellation:"Лебед", letter:"γ", mag:2.23 },
+        { rank:72, name:"Шедар", constellation:"Касиопея", letter:"α", mag:2.24 },
+        { rank:73, name:"Елтанин", constellation:"Дракон", letter:"γ", mag:2.24 },
+        { rank:74, name:"Минтака", constellation:"Орион", letter:"δ", mag:2.25 },
+        { rank:75, name:"Каф", constellation:"Касиопея", letter:"β", mag:2.28 },
+        { rank:76, name:"Епсилон Кентавър", constellation:"Кентавър", letter:"ε", mag:2.29 },
+        { rank:77, name:"Джубба", constellation:"Скорпион", letter:"δ", mag:2.29 },
+        { rank:78, name:"Вей", constellation:"Скорпион", letter:"ε", mag:2.29 },
+        { rank:79, name:"Алфа Вълк", constellation:"Вълк", letter:"α", mag:2.30 },
+        { rank:80, name:"Ета Кентавър", constellation:"Кентавър", letter:"η", mag:2.33 },
+        { rank:81, name:"Мерак", constellation:"Голяма мечка", letter:"β", mag:2.34 },
+        { rank:82, name:"Изар", constellation:"Воловар", letter:"ε", mag:2.35 },
+        { rank:83, name:"Ениф", constellation:"Пегас", letter:"ε", mag:2.38 },
+        { rank:84, name:"Гиртаб", constellation:"Скорпион", letter:"κ", mag:2.39 },
+        { rank:85, name:"Анкаа", constellation:"Феникс", letter:"α", mag:2.40 },
+        { rank:86, name:"Фекда", constellation:"Голяма мечка", letter:"γ", mag:2.41 },
+        { rank:87, name:"Сабик", constellation:"Змиеносец", letter:"η", mag:2.43 },
+        { rank:88, name:"Шеат", constellation:"Пегас", letter:"β", mag:2.44 },
+        { rank:89, name:"Алдерамин", constellation:"Цефей", letter:"α", mag:2.45 },
+        { rank:90, name:"Алудра", constellation:"Голямо куче", letter:"η", mag:2.45 }
+    ];
+
+    // ==================== ТЕОРИЯ ЗА ТЕСТЧЕ (С ДОБАВЕНА КАТЕГОРИЯ ЗА ПЛАНЕТИТЕ ДЖУДЖЕТА) ====================
+    const theoryData = {
+        " Зодиакални дати": `Овен: 19 април – 13 май\nТелец: 14 май – 19 юни\nБлизнаци: 20 юни – 20 юли\nРак: 21 юли – 9 август\nЛъв: 10 август – 15 септември\nДева: 16 септември – 30 октомври\nВезни: 31 октомври – 22 ноември\nСкорпион: 23 ноември – 29 ноември\nЗмиеносец: 30 ноември – 17 декември\nСтрелец: 18 декември – 18 януари\nКозирог: 19 януари – 15 февруари\nВодолей: 16 февруари – 11 март\nРиби: 12 март – 18 април`,
+        " Радиуси (km)": ` Слънце: 696 340\n Юпитер: 69 911\n Сатурн: 58 232\n Уран: 25 362\n Нептун: 24 622\n Земя: 6 371\n Венера: 6 052\n Марс: 3 n Меркурий: 2 440\n Луна: 1 737`,
+        " Орбити (а.е., ексцентрицитет)": `Меркурий: a=0.387, e=0.2056\nЗемя: a=1, e=0.0167\nМарс: a=1.524, e=0.0934\nПлутон: a=39.48, e=0.2488\nЦерера: a=2.766, e=0.0758\n Луна: a=384400 km (0.00257 а.е.), e=0.0549`,
+        " Лунни периоди": `Сидеричен месец: 27.32 дни (спрямо звездите)\nСинодичен месец: 29.53 дни (от новолуние до новолуние)\nДраконичен месец: 27.21 дни (между две преминавания през възходящия възел)`,
+        " Спектрални класове": `O: 30 000–50 000 K (много горещи, масивни)\nB: 10 000–30 000 K (Ригел)\nA: 7 500–10 000 K (Вега, Сириус)\nF: 6 000–7 500 K (Полярна звезда)\nG: 5 200–6 000 K (Слънце, Толиман/Алфа Кентавър A)\nK: 3 700–5 200 K (Алдебаран)\nM: 2 400–3 700 K (Бетелгейзе, Проксима Кентавър)`,
+        "️ Най-големи луни (диаметър km)": `1. Ганимед (Юпитер): 5 268 km\n2. Титан (Сатурн): 5 152 km\n3. Калисто (Юпитер): 4 821 km\n4. Йо (Юпитер): 3 643 km\n5. Луна (Земя): 3 474 km\n6. Европа (Юпитер): 3 122 km\n7. Тритон (Нептун): 2 707 km`,
+        " Зодиакални съзвездия + Орион": `Зодиакални: Овен, Телец, Близнаци, Рак, Лъв, Дева, Везни, Скорпион, Змиеносец, Стрелец, Козирог, Водолей, Риби.\nОрион: деклинация 0° до +20°, ректасцензия около 5h–6h.`,
+        " 10-те най-ярки звезди": `1. Сириус (Голямо куче) -1.46\n2. Канопус (Кил) -0.74\n3. Алфа Кентавър (Кентавър) -0.27\n4. Арктур (Воловар) -0.05\n5. Вега (Лира) 0.03\n6. Капела (Коларник) 0.08\n7. Ригел (Орион) 0.13\n8. Процион (Малко куче) 0.34\n9. Ахернар (Еридан) 0.46\n10. Бетелгейзе (Орион) 0.50`,
+        " Разстояния в Космоса": `Вътрешна Слънчева система: до няколко а.е.\nОблак на Оорт: 2 000 – 100 000 а.е. (~0.03 – 1.6 св.г.)\nНай-близка звезда: 4.2 св.г. (Проксима Кентавър)\nХиади: ~150 св.г., Плеяди: ~440 св.г.\nM13 (Херкул): 25 000 св.г., M4: 7 000 св.г.\nГолям Магеланов облак: 160 000 св.г.\nМалък Магеланов облак: 200 000 св.г.\nM31 (Андромеда): 2.5 млн св.г.\nM33: 3 млн св.г.\nКуп Дева: 50–60 млн св.г.`,
+        " Луни на планети (известни)": `Марс: Фобос, Деймос\nЮпитер: Йо, Европа, Ганимед, Калисто (Галилееви)\nСатурн: Титан, Рея, Япет, Диона, Тефида, Енцелад`,
+        " Еволюция на звездите": `Ниска маса (<8 M☉): червено джудже → бяло джудже\nСредна маса (0.8–8 M☉): червен гигант → планетарна мъглявина → бяло джудже\nВисока маса (>8 M☉): червен свръхгигант → свръхнова → неутронна звезда или черна дупка`,
+        " Планети джуджета (Dwarf Planets)": `🌑 Церера (Ceres) – Астероиден пояс (между Марс и Юпитер). Диаметър: ~940 km.\n🌑 Плутон (Pluto) – Пояс на Кайпер (30-50 а.е.). Диаметър: ~2 377 km. Спътници: Харон, Стикс, Никта, Кербер, Хидра.\n🌑 Хаумея (Haumea) – Пояс на Кайпер. Удължена форма, бързо въртене (~4 часа). Диаметър: ~2 320 x 1 704 x 1 026 km. Спътници: Хиака, Намака.\n🌑 Макемаке (Makemake) – Пояс на Кайпер. Диаметър: ~1 430 km. Спътник: S/2015 (136472) 1.\n🌑 Ерида (Eris) – Разпръснат диск (отвъд Кайпер). Диаметър: ~2 326 km. Спътник: Дисномия.\n📍 Други кандидати: Орк, Квавар, Гонггонг, Седа, Лелеакухонуа.\n📍 Местоположения: Астероиден пояс → Церера; Пояс на Кайпер → Плутон, Хаумея, Макемаке; Разпръснат диск → Ерида.\n📏 Сравнение: Меркурий (4 879 km) е по-голям от всички планети джуджета.`
+    };
+
+    // ==================== ФУНКЦИИ ====================
+    function renderDatabase(filter = "") {
+        const container = document.getElementById('starsListContainer');
+        const f = filter.toLowerCase();
+        const filtered = starsDatabase.filter(s => 
+            s.name.toLowerCase().includes(f) || 
+            s.constellation.toLowerCase().includes(f) || 
+            s.letter.includes(f) || 
+            s.rank.toString().includes(f)
+        );
+        container.innerHTML = filtered.map(s => `
+            <div class="star-item">
+                <span class="star-rank">#${s.rank}</span>
+                <span class="star-name-db">${s.name}</span>
+                <span class="star-const">${s.constellation}</span>
+                <span class="star-letter">${s.letter}</span>
+                <span class="star-mag">${s.mag} mag</span>
+            </div>
+        `).join('');
+        if(!filtered.length) container.innerHTML = '<div style="padding:1rem;text-align:center;">Няма намерени звезди</div>';
+    }
+
+    function renderTheory(filter = "") {
+        const container = document.getElementById('theoryContainer');
+        const f = filter.toLowerCase();
+        let html = '';
+        for (let [category, content] of Object.entries(theoryData)) {
+            if (f && !category.toLowerCase().includes(f) && !content.toLowerCase().includes(f)) continue;
+            html += `<div class="category-title">${category}</div>`;
+            content.split('\n').forEach(line => {
+                if (line.trim()) html += `<div class="info-item">${line}</div>`;
+            });
+        }
+        if (!html) html = '<div class="info-item">Няма резултати за тази търсачка.</div>';
+        container.innerHTML = html;
+    }
+
+    // ==================== ИГРАТА ====================
+    let currentStarStan = null, currentStarStoy = null;
+    let correctCount = 0, wrongCount = 0;
+    function updateStats() { 
+        document.getElementById('correctCount').innerText = correctCount; 
+        document.getElementById('wrongCount').innerText = wrongCount; 
+    }
+    function getRandStar() { return starsDatabase[Math.floor(Math.random() * starsDatabase.length)]; }
+
+    function renderStanislav() {
+        if(!currentStarStan) currentStarStan = getRandStar();
+        const html = `
+            <div class="question-display">
+                <div class="question-value">${currentStarStan.name}</div>
+                <div class="hint-text">ранг ${currentStarStan.rank} | видима величина ${currentStarStan.mag}</div>
+            </div>
+            <button class="random-btn" id="stanNewBtn">НОВА ЗВЕЗДА</button>
+            <div class="input-group"><label>СЪЗВЕЗДИЕ (на български)</label><input id="stanConst" placeholder="напр. Голямо куче, Орион"></div>
+            <div class="input-group"><label>ГРЪЦКА БУКВА</label><input id="stanLetter" placeholder="α, β, γ, δ..."></div>
+            <button class="check-btn" id="stanCheck">ПРОВЕРИ</button>
+            <div id="stanFeedback" class="feedback"></div>`;
+        document.getElementById('stanislavGame').innerHTML = html;
+        document.getElementById('stanNewBtn').onclick = () => { currentStarStan = getRandStar(); renderStanislav(); };
+        document.getElementById('stanCheck').onclick = () => {
+            const uConst = document.getElementById('stanConst').value.trim();
+            const uLetter = document.getElementById('stanLetter').value.trim();
+            const fb = document.getElementById('stanFeedback');
+            if(!uConst && !uLetter) {
+                fb.innerHTML = `❌ НЕ СИ ПОПЪЛНИЛ НИЩО. Верният отговор: ${currentStarStan.constellation}, буква ${currentStarStan.letter}`;
+                fb.className = 'feedback wrong';
+                wrongCount++; updateStats(); return;
+            }
+            if(uConst.toLowerCase() === currentStarStan.constellation.toLowerCase() && uLetter === currentStarStan.letter) {
+                fb.innerHTML = `✅ ПРАВИЛНО! ${currentStarStan.name} е от ${currentStarStan.constellation} (${currentStarStan.letter})`;
+                fb.className = 'feedback correct';
+                correctCount++; updateStats();
+                currentStarStan = getRandStar(); renderStanislav();
+            } else {
+                fb.innerHTML = `❌ ГРЕШКА! Верно: ${currentStarStan.constellation}, ${currentStarStan.letter} (${currentStarStan.name})`;
+                fb.className = 'feedback wrong';
+                wrongCount++; updateStats();
+            }
+        };
+    }
+
+    function renderStoyanov() {
+        if(!currentStarStoy) currentStarStoy = getRandStar();
+        const html = `
+            <div class="question-display">
+                <div class="question-value">${currentStarStoy.constellation} &nbsp; | &nbsp; ${currentStarStoy.letter}</div>
+                <div class="hint-text">ранг ${currentStarStoy.rank} | видима величина ${currentStarStoy.mag}</div>
+            </div>
+            <button class="random-btn" id="stoyNewBtn">НОВ ВЪПРОС</button>
+            <div class="input-group"><label>ИМЕ НА ЗВЕЗДАТА</label><input id="stoyName" placeholder="напр. Сириус, Ригел, Вега"></div>
+            <button class="check-btn" id="stoyCheck">ПРОВЕРИ</button>
+            <div id="stoyFeedback" class="feedback"></div>`;
+        document.getElementById('stoyanovGame').innerHTML = html;
+        document.getElementById('stoyNewBtn').onclick = () => { currentStarStoy = getRandStar(); renderStoyanov(); };
+        document.getElementById('stoyCheck').onclick = () => {
+            const uName = document.getElementById('stoyName').value.trim();
+            const fb = document.getElementById('stoyFeedback');
+            if(!uName) {
+                fb.innerHTML = `❌ НЕ СИ ВЪВЕЛ ИМЕ. Верният отговор: ${currentStarStoy.name}`;
+                fb.className = 'feedback wrong';
+                wrongCount++; updateStats(); return;
+            }
+            if(uName.toLowerCase() === currentStarStoy.name.toLowerCase()) {
+                fb.innerHTML = `✅ ПРАВИЛНО! ${currentStarStoy.name} е вярно.`;
+                fb.className = 'feedback correct';
+                correctCount++; updateStats();
+                currentStarStoy = getRandStar(); renderStoyanov();
+            } else {
+                fb.innerHTML = `❌ ГРЕШКА! Правилната звезда е: ${currentStarStoy.name} (${currentStarStoy.constellation}, ${currentStarStoy.letter})`;
+                fb.className = 'feedback wrong';
+                wrongCount++; updateStats();
+            }
+        };
+    }
+
+    function showSection(sectionId) {
+        ['stanislavSection', 'stoyanovSection', 'databaseSection', 'testcheSection'].forEach(id => {
+            document.getElementById(id).classList.remove('visible');
+        });
+        document.getElementById(sectionId).classList.add('visible');
+        if(sectionId === 'stanislavSection') renderStanislav();
+        if(sectionId === 'stoyanovSection') renderStoyanov();
+        if(sectionId === 'databaseSection') { renderDatabase(''); document.getElementById('dbSearch').oninput = e => renderDatabase(e.target.value); }
+        if(sectionId === 'testcheSection') { renderTheory(''); document.getElementById('theorySearch').oninput = e => renderTheory(e.target.value); }
+    }
+
+    function initializeEverything() {
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sec = btn.getAttribute('data-section');
+                if(sec === 'stanislav') showSection('stanislavSection');
+                else if(sec === 'stoyanov') showSection('stoyanovSection');
+                else if(sec === 'database') showSection('databaseSection');
+                else if(sec === 'testche') showSection('testcheSection');
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        showSection('stanislavSection');
+        document.querySelector('.mode-btn[data-section="stanislav"]').classList.add('active');
+    }
+
+    if(sessionStorage.getItem('astro_access') === 'true') initializeEverything();
+</script>
+</body>
+</html>
